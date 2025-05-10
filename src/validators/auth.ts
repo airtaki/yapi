@@ -13,8 +13,10 @@ const requireNumber = getConfig<boolean>("auth.password.requireNumber");
 export const objectId = [
   param("id")
     .notEmpty()
+    .bail()
     .isMongoId()
     .withMessage("Invalid ID format")
+    .bail()
     .custom(async (value: string, { req }) => {
       req.setValidArguments("id", value);
       return true;
@@ -24,7 +26,14 @@ export const objectId = [
 export const signUp = [
   body("email")
     .notEmpty()
+    .withMessage("Email is required")
+    .bail()
     .isEmail()
+    .withMessage("Invalid email format")
+    .bail()
+    .isLength({ min: 5, max: 128 })
+    .withMessage("Email must be between 5 and 128 characters long")
+    .bail()
     .custom(async (value: string, { req }) => {
       const user = await UserModel.findOne({ email: value }).lean();
       if (user) {
@@ -36,29 +45,50 @@ export const signUp = [
 
   body("password")
     .notEmpty()
+    .withMessage("Password is required")
+    .bail()
     .isString()
+    .withMessage("Password must be a string")
+    .bail()
     .isLength({ min: passwordMinLength, max: passwordMaxLength })
     .withMessage(
       `Password must be between ${passwordMinLength} and ${passwordMaxLength} characters long.`
     )
+    .bail()
     .custom((value: string, { req }) => {
-      const checks = [
-        requireUppercase && !/[A-Z]/.test(value)
-          ? "Password must contain at least one uppercase letter."
-          : null,
-        requireLowercase && !/[a-z]/.test(value)
-          ? "Password must contain at least one lowercase letter."
-          : null,
-        requireSpecial && !/[^a-zA-Z0-9]/.test(value)
-          ? "Password must contain at least one special character."
-          : null,
-        requireNumber && !/\d/.test(value)
-          ? "Password must contain at least one number."
-          : null,
-      ];
-      const errors = checks.filter((msg): msg is string => Boolean(msg));
-      if (errors.length > 0) {
-        throw new ValidationError("Validation Error", errors);
+      const rules = [
+        {
+          required: requireUppercase,
+          test: /[A-Z]/,
+          label: "an uppercase letter",
+        },
+        {
+          required: requireLowercase,
+          test: /[a-z]/,
+          label: "a lowercase letter",
+        },
+        {
+          required: requireSpecial,
+          test: /[^a-zA-Z0-9]/,
+          label: "a special character",
+        },
+        { required: requireNumber, test: /\d/, label: "a number" },
+      ] as const;
+
+      const failed = rules.filter(
+        (rule) => rule.required && !rule.test.test(value)
+      );
+
+      if (failed.length > 0) {
+        const parts = rules.map((rule) => rule.label);
+        const last = parts.pop();
+        const message = `Password must contain ${parts.join(", ")}${
+          parts.length > 0 ? " and " : ""
+        }${last}.`;
+        throw new ValidationError(
+          message,
+          failed.map(() => true)
+        );
       }
       req.setValidArguments("password", value);
       return true;
@@ -68,7 +98,9 @@ export const signUp = [
 export const signIn = [
   body("email")
     .notEmpty()
+    .bail()
     .isEmail()
+    .bail()
     .custom(async (value: string, { req }) => {
       req.setValidArguments("email", value);
       return true;
@@ -76,7 +108,11 @@ export const signIn = [
 
   body("password")
     .notEmpty()
+    .bail()
     .isString()
+    .bail()
+    .isLength({ min: passwordMinLength, max: passwordMaxLength })
+    .bail()
     .custom((value: string, { req }) => {
       req.setValidArguments("password", value);
       return true;

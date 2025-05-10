@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { maskSensitiveData } from "../utils/mask";
+import { NextFunction, Request, Response } from "express";
 import { getConfig, parseBoolean } from "../utils/config";
+import { maskSensitiveData } from "../utils/mask";
 
 const showErrors = getConfig<boolean>("showStackErrors", parseBoolean);
 
