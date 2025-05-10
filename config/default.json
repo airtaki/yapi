@@ -1,0 +1,58 @@
+{
+  "port": 0,
+  "appName": "YAPI",
+  "showStackErrors": true,
+  "supportedLanguages": [
+    "en-US",
+    "hu-HU"
+  ],
+  "mongo": {
+    "uri": "",
+    "username": "",
+    "password": "",
+    "options": {
+      "useNewUrlParser": true,
+      "useUnifiedTopology": true,
+      "useCreateIndex": true,
+      "useFindAndModify": false
+    }
+  },
+  "ssl": {
+    "key": "",
+    "cert": ""
+  },
+  "auth": {
+    "requireEmailVerification": false,
+    "jwt": {
+      "secret": "",
+      "expiresIn": 0
+    },
+    "password": {
+      "minLength": 0,
+      "maxLength": 0,
+      "requireUppercase": false,
+      "requireLowercase": false,
+      "requireSpecial": false,
+      "requireNumber": false
+    },
+    "internal": {
+      "token": ""
+    },
+    "external": {
+      "token": ""
+    }
+  },
+  "mailing": {
+    "host": "",
+    "port": 0,
+    "secure": false,
+    "apiKeyId": "",
+    "apiKey": "",
+    "username": "",
+    "password": "",
+    "from": {
+      "name": "",
+      "email": ""
+    }
+  }
+}

@@ -104,12 +104,6 @@ dist
 .temp
 .cache
 
-# vitepress build output
-**/.vitepress/dist
-
-# vitepress cache directory
-**/.vitepress/cache
-
 # Docusaurus cache and generated files
 .docusaurus
 
@@ -134,3 +128,14 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# VSCode related
+.vscode
+
+# Config files to ignore: everything in the config dir, except default.json
+config/*
+!config/default.json
+
+# key files
+keys/*.cert
+keys/*.pem
