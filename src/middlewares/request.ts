@@ -16,13 +16,15 @@ export const requestHandler = async (
   req.locale =
     pick(supportedLanguages, acceptLanguages) ?? supportedLanguages[0];
 
-  req.validArguments = new Map<string, any>();
-  req.setValidArguments = (key, value) => {
-    req.validArguments.set(key, value);
+  const args = new Map<string, unknown>();
+  req.validArguments = args;
+  req.setValidArguments = <T>(key: string, value: T) => {
+    args.set(key, value);
   };
-  req.getValidArguments = (key) => {
-    return req.validArguments.get(key);
+  req.getValidArguments = <T>(key: string): T => {
+    return args.get(key) as T;
   };
+
   req.getIp = () => {
     const ip = (
       req.headers["x-forwarded-for"] ||

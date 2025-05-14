@@ -1,6 +1,7 @@
 {
   "port": 0,
   "appName": "YAPI",
+  "baseUrl": "",
   "showStackErrors": true,
   "supportedLanguages": [
     "en-US",
@@ -39,6 +40,8 @@
       "token": ""
     },
     "external": {
+      "ipWhiteList": [],
+      "tokenName": "",
       "token": ""
     }
   },

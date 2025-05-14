@@ -7,12 +7,12 @@ import logger from "../utils/logger";
 import { toPublicUser } from "../utils/user";
 
 export const create = async (
-  userInput: UserInput & { status: UserStatus }
+  user: Omit<User, "_id">
 ): Promise<PublicUser> => {
   try {
-    const password = await hashPassword(userInput.password);
+    const password = await hashPassword(user.password);
     const newUser = new UserModel({
-      ...userInput,
+      ...user,
       password,
     });
     await newUser.save();
@@ -20,7 +20,7 @@ export const create = async (
     logger.info(`User has been created.`, userWithoutPassword);
     return userWithoutPassword;
   } catch (error) {
-    logger.error(`Error creating user.`, { error, userInput });
+    logger.error(`Error creating user.`, { error, userInput: user });
     throw new InternalError("Error creating user");
   }
 };
@@ -49,7 +49,7 @@ export const update = async (
     return user;
   } catch (error) {
     if (error instanceof NotFoundError) {
-      logger.warn(`User not found.`, { userId });
+      logger.notice(`User not found.`, { userId });
       throw new NotFoundError("User not found");
     }
     logger.error(`Error updating user.`, {
@@ -70,7 +70,7 @@ export const get = async (userId: string): Promise<PublicUser> => {
     return toPublicUser(user.toObject());
   } catch (error) {
     if (error instanceof NotFoundError) {
-      logger.warn(`User not found.`, { userId });
+      logger.notice(`User not found.`, { userId });
       throw new NotFoundError("User not found");
     }
     logger.error(`Error fetching user.`, { error, userId });
@@ -89,7 +89,7 @@ export const getByEmail = async (
     return toPublicUser(user.toObject());
   } catch (error) {
     if (error instanceof NotFoundError) {
-      logger.warn(`User not found.`, { email });
+      logger.notice(`User not found.`, { email });
       throw new NotFoundError("User not found");
     }
     logger.error(`Error fetching user by email.`, { error, email });
@@ -112,7 +112,7 @@ export const archive = async (userId: string): Promise<boolean> => {
     return true;
   } catch (error) {
     if (error instanceof NotFoundError) {
-      logger.warn(`User not found.`, { userId });
+      logger.notice(`User not found.`, { userId });
       throw new NotFoundError("User not found");
     }
     logger.error(`Error archiving user.`, { error, userId });
@@ -136,7 +136,7 @@ export const setStatus = async (
     return true;
   } catch (error) {
     if (error instanceof NotFoundError) {
-      logger.warn(`User not found.`, { userId });
+      logger.warning(`User not found.`, { userId });
       throw new NotFoundError("User not found");
     }
     logger.error(`Error setting user status.`, { error, userId, status });

@@ -3,13 +3,13 @@ import { PublicUser } from "./user";
 
 declare global {
   namespace Express {
-    export interface Request {
+    interface Request {
       // Locale string
       locale: string;
       // Validated arguments by the validator
-      validArguments: Map<string, any>;
-      setValidArguments: (key: string, value: any) => void;
-      getValidArguments: (key: string) => any;
+      validArguments: Map<string, unknown>;
+      setValidArguments: <T>(key: string, value: T) => void;
+      getValidArguments: <T>(key: string) => T;
       getIp: () => string;
       user?: PublicUser;
     }

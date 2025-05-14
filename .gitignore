@@ -131,6 +131,7 @@ dist
 
 # VSCode related
 .vscode
+.editorconfig
 
 # Config files to ignore: everything in the config dir, except default.json
 config/*

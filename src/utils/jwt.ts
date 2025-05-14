@@ -6,26 +6,26 @@ import logger from "./logger";
 const secret = getConfig<string>("auth.jwt.secret");
 const expiresIn = getConfig<number>("auth.jwt.expiresIn", parseNumber);
 
-export const generateToken = (payload: object): string => {
+export const generateJwt = (payload: object): string => {
   return jwt.sign(payload, secret, { expiresIn });
 };
 
-export const verifyToken = (token: string): JwtPayload => {
+export const verifyJwt = (token: string): JwtPayload => {
   try {
     return jwt.verify(token, secret) as JwtPayload;
   } catch (error: any) {
     switch (error?.name ?? "") {
       case "TokenExpiredError":
-        logger.error("Token expired", { error });
+        logger.notice("Token expired", { error });
         break;
       case "JsonWebTokenError":
-        logger.error("Invalid token", { error });
+        logger.notice("Invalid token", { error });
         break;
       case "NotBeforeError":
-        logger.error("Token not active", { error });
+        logger.notice("Token not active", { error });
         break;
       default:
-        logger.error("Token verification error", { error });
+        logger.warning("Token verification error", { error });
     }
     throw new UnAuthorizedError("Invalid token");
   }

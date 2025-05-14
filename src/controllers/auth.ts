@@ -7,8 +7,8 @@ export const signIn = async (
   next: NextFunction
 ) => {
   try {
-    const email = req.getValidArguments("email");
-    const password = req.getValidArguments("password");
+    const email = req.getValidArguments<string>("email");
+    const password = req.getValidArguments<string>("password");
     const token = await authService.signIn({ email, password }, req.getIp());
     res.success(200, "User has been authenticated.", { token });
   } catch (error) {
@@ -34,10 +34,10 @@ export const signUp = async (
   next: NextFunction
 ) => {
   try {
-    const email = req.getValidArguments("email");
-    const password = req.getValidArguments("password");
-    const token = await authService.signUp({ email, password }, req.getIp());
-    res.success(200, "User has been signed up.", { token });
+    const email = req.getValidArguments<string>("email");
+    const password = req.getValidArguments<string>("password");
+    const result = await authService.signUp({ email, password }, req.getIp());
+    res.success(200, "User has been signed up.", { result });
   } catch (error) {
     return next(error);
   }
@@ -51,15 +51,15 @@ export const me = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export const getTokenById = async (
+export const verifySignUp = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const id = req.getValidArguments("id");
-    const token = await authService.getTokenById(id);
-    res.success(200, "Token has been fetched.", { token });
+    const token = req.getValidArguments<string>("token");
+    const result = await authService.verifySignUp(token, req.getIp());
+    res.success(200, "User has been verified.", { result });
   } catch (error) {
     return next(error);
   }

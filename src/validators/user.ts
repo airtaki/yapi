@@ -2,16 +2,9 @@ import { body, check } from "express-validator";
 import { ObjectId } from "mongodb";
 import { isValidObjectId } from "mongoose";
 import UserModel from "../models/user";
-import { UserStatus } from "../types/user";
+import { UserStatus, Gender } from "../types/user";
 import { getConfig } from "../utils/config";
-import { NotFoundError, ValidationError } from "../utils/error";
-
-const passwordMinLength = getConfig<number>("auth.password.minLength");
-const passwordMaxLength = getConfig<number>("auth.password.maxLength");
-const requireUppercase = getConfig<boolean>("auth.password.requireUppercase");
-const requireLowercase = getConfig<boolean>("auth.password.requireLowercase");
-const requireSpecial = getConfig<boolean>("auth.password.requireSpecial");
-const requireNumber = getConfig<boolean>("auth.password.requireNumber");
+import { ConflictError, NotFoundError, UnAuthorizedError, ValidationError } from "../utils/error";
 
 export const isValidUser = [
   check("userId")
@@ -26,51 +19,17 @@ export const isValidUser = [
       if (!user) {
         throw new NotFoundError(`User not found with id: ${value}`);
       }
+      if (user.status !== UserStatus.ACTIVE) {
+        throw new NotFoundError(
+          `User not found with id: ${value}`
+        );
+      }
       req.setValidArguments("user", user);
       return true;
     }),
 ];
 
 export const validateUserData = [
-  body("email")
-    .notEmpty()
-    .isEmail()
-    .custom(async (value: string) => {
-      const user = await UserModel.findOne({ email: value }).lean();
-      if (user) {
-        throw new Error("Email already exists");
-      }
-      return true;
-    }),
-
-  body("password")
-    .notEmpty()
-    .isString()
-    .isLength({ min: passwordMinLength, max: passwordMaxLength })
-    .withMessage(
-      `Password must be between ${passwordMinLength} and ${passwordMaxLength} characters long.`
-    )
-    .custom((value: string) => {
-      const checks = [
-        requireUppercase && !/[A-Z]/.test(value)
-          ? "Password must contain at least one uppercase letter."
-          : null,
-        requireLowercase && !/[a-z]/.test(value)
-          ? "Password must contain at least one lowercase letter."
-          : null,
-        requireSpecial && !/[^a-zA-Z0-9]/.test(value)
-          ? "Password must contain at least one special character."
-          : null,
-        requireNumber && !/\d/.test(value)
-          ? "Password must contain at least one number."
-          : null,
-      ];
-      const errors = checks.filter((msg): msg is string => Boolean(msg));
-      if (errors.length > 0) {
-        throw new ValidationError("Validation Error", errors);
-      }
-      return true;
-    }),
 
   body("status")
     .notEmpty()
@@ -79,6 +38,15 @@ export const validateUserData = [
     .withMessage(
       `Status must be one of: ${Object.values(UserStatus).join(", ")}.`
     ),
+
+  body("userProfile")
+    .optional()
+    .isObject()
+    .withMessage("User profile must be an object")
+    .custom((value: Record<string, number | string | Gender>) => {
+      // TODO: finish the validation
+      return true;
+    }),
 
   body("userProperties")
     .optional()

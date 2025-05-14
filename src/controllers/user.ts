@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import * as userService from "../services/user";
-import { UserStatus } from "../types/user";
+import { User, UserStatus } from "../types/user";
 
 export const create = async (
   req: Request,
@@ -8,9 +8,9 @@ export const create = async (
   next: NextFunction
 ) => {
   try {
-    const email: string = req.getValidArguments("email");
-    const password: string = req.getValidArguments("password");
-    const status: UserStatus = req.getValidArguments("status");
+    const email = req.getValidArguments<string>("email");
+    const password = req.getValidArguments<string>("password");
+    const status = req.getValidArguments<UserStatus>("status");
     const user = await userService.create({ email, password, status });
     res.success(200, "User has been created.", user);
   } catch (error) {
@@ -25,7 +25,7 @@ export const update = async (
 ) => {
   try {
     const { userId } = req.params;
-    const userData = req.getValidArguments("userData");
+    const userData = req.getValidArguments<Partial<User>>("userData");
     const user = await userService.update(userId, userData);
     res.success(200, "User has been updated.", user);
   } catch (error) {
