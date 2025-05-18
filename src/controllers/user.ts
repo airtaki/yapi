@@ -2,11 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import * as userService from "../services/user";
 import { User, UserStatus } from "../types/user";
 
-export const create = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const create = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const email = req.getValidArguments<string>("email");
     const password = req.getValidArguments<string>("password");
@@ -18,26 +14,18 @@ export const create = async (
   }
 };
 
-export const update = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const update = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { userId } = req.params;
-    const userData = req.getValidArguments<Partial<User>>("userData");
-    const user = await userService.update(userId, userData);
+    const userId = req.getValidArguments<string>("userId");
+    const delta = req.getValidArguments<Partial<User>>("delta");
+    const user = await userService.update(userId, delta);
     res.success(200, "User has been updated.", user);
   } catch (error) {
     return next(error);
   }
 };
 
-export const get = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const get = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { userId } = req.params;
     const user = await userService.get(userId);
@@ -47,11 +35,7 @@ export const get = async (
   }
 };
 
-export const archive = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const archive = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { userId } = req.params;
     const result = await userService.archive(userId);

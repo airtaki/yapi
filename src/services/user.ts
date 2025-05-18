@@ -6,9 +6,7 @@ import { hashPassword } from "../utils/hash";
 import logger from "../utils/logger";
 import { toPublicUser } from "../utils/user";
 
-export const create = async (
-  user: Omit<User, "_id">
-): Promise<PublicUser> => {
+export const create = async (user: Omit<User, "_id">): Promise<PublicUser> => {
   try {
     const password = await hashPassword(user.password);
     const newUser = new UserModel({
@@ -25,14 +23,9 @@ export const create = async (
   }
 };
 
-export const update = async (
-  userId: string,
-  delta: Partial<User>
-): Promise<PublicUser> => {
+export const update = async (userId: string, delta: Partial<User>): Promise<PublicUser> => {
   try {
-    const hashedPassword = delta.password
-      ? await hashPassword(delta.password)
-      : undefined;
+    const hashedPassword = delta.password ? await hashPassword(delta.password) : undefined;
     const updatedUser = await UserModel.findOneAndUpdate(
       { _id: new ObjectId(userId) },
       {
@@ -78,9 +71,7 @@ export const get = async (userId: string): Promise<PublicUser> => {
   }
 };
 
-export const getByEmail = async (
-  email: string
-): Promise<PublicUser> => {
+export const getByEmail = async (email: string): Promise<PublicUser> => {
   try {
     const user = await UserModel.findOne({ email }).lean();
     if (!user) {
@@ -120,16 +111,9 @@ export const archive = async (userId: string): Promise<boolean> => {
   }
 };
 
-export const setStatus = async (
-  userId: string,
-  status: UserStatus
-): Promise<boolean> => {
+export const setStatus = async (userId: string, status: UserStatus): Promise<boolean> => {
   try {
-    const user = await UserModel.findOneAndUpdate(
-      { _id: new ObjectId(userId) },
-      { status },
-      { new: true }
-    ).lean();
+    const user = await UserModel.findOneAndUpdate({ _id: new ObjectId(userId) }, { status }, { new: true }).lean();
     if (!user) {
       throw new NotFoundError(`User not found with id: ${userId}`);
     }

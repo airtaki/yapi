@@ -5,7 +5,7 @@ import UserModel from "../models/user";
 import { UserStatus } from "../types/user";
 import { NotFoundError, ValidationError } from "../utils/error";
 
-export default (status: [UserStatus] | null) => {
+export default (status?: [UserStatus] | null) => {
   return check("userId")
     .notEmpty()
     .withMessage("User ID is required")

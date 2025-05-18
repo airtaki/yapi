@@ -23,14 +23,21 @@
     "cert": ""
   },
   "auth": {
-    "requireEmailVerification": false,
+    "verification": {
+      "requireForSignUp": false,
+      "token": {
+        "expiresIn": 900,
+        "blocks": 2,
+        "blockLength": 4
+      }
+    },
     "jwt": {
       "secret": "",
       "expiresIn": 0
     },
     "password": {
-      "minLength": 0,
-      "maxLength": 0,
+      "minLength": 6,
+      "maxLength": 128,
       "requireUppercase": false,
       "requireLowercase": false,
       "requireSpecial": false,

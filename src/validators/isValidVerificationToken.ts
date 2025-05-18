@@ -8,7 +8,7 @@ export default (name: string) => {
     .isString()
     .withMessage("Token must be a string")
     .bail()
-    .isLength({ min: 64, max: 64 })
+    .isLength({ min: 8, max: 64 })
     .withMessage("Invalid token")
     .bail()
     .custom(async (value: string, { req }) => {

@@ -3,12 +3,13 @@ import express, { Application, NextFunction, Request, Response } from "express";
 import fs from "fs";
 import https from "https";
 import mongoose from "mongoose";
+import morgan from "morgan";
 import * as errorHandler from "./middlewares/errorHandler";
 import { requestHandler } from "./middlewares/request";
 import { responseHandler } from "./middlewares/response";
 import { router as authRoutes } from "./routes/auth";
-import { ValidationError } from "./utils/error";
 import { getConfig, parseNumber } from "./utils/config";
+import { ValidationError } from "./utils/error";
 
 const app: Application = express();
 const appName = getConfig<string>("appName");
@@ -18,7 +19,7 @@ const mongoUri = getConfig<string>("mongo.uri");
 app.use(cors());
 app.use(requestHandler);
 app.use(responseHandler);
-
+app.use(morgan("dev"));
 app.use(
   express.json(),
   (err: any, req: Request, res: Response, next: NextFunction) => {
