@@ -16,7 +16,8 @@ This repository is intended to be used as a **template**. Developers can clone o
 - SMTP email support via SendGrid
 - Environment-based configuration
 
-> [!IMPORTANT] Work in progress, lot of further features will come in the near future.
+> [!IMPORTANT]
+> Work in progress, lot of further features will come in the near future.
 
 ## Project Structure
 
