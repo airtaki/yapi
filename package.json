@@ -37,7 +37,7 @@
   "dependencies": {
     "accept-language-parser": "^1.5.0",
     "argon2": "^0.43.0",
-    "axios": "^1.7.9",
+    "axios": "^1.13.5",
     "config": "^3.3.12",
     "cors": "^2.8.5",
     "express": "^4.21.2",
